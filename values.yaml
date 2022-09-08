@@ -19,6 +19,10 @@ podLabels: {}
 # Passbolt configuration
 passbolt:
   config:
+    session: php
+    cacheCake:
+      defaultServer: passbolt-redis
+      defaultPassword: redispassword
     debug: false
     registration: false
     php:
@@ -157,7 +161,7 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: localhost
+    - host: pg-helm.open-web.fr
       scheme: http
       paths:
         - path: /

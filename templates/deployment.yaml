@@ -50,6 +50,12 @@ spec:
               apt-get install -y php-redis;
               /usr/bin/wait-for.sh -t 0 ${DATASOURCES_DEFAULT_HOST}:3306 -- /docker-entrypoint.sh"
           env:
+          - name: SESSION_DEFAULTS
+            value: {{ .Values.passbolt.config.session }}
+          - name: CACHE_CAKE_DEFAULT_SERVER
+            value: {{ .Values.passbolt.config.cacheCake.defaultServer }}
+          - name: CACHE_CAKE_DEFAULT_PASSWORD
+            value: {{ .Values.passbolt.config.cacheCake.defaultPassword }}
           - name: APP_FULL_BASE_URL
             value: {{ index .Values.ingress.hosts 0 "scheme" }}://{{ index .Values.ingress.hosts 0 "host" }}
           - name: DATASOURCES_DEFAULT_HOST
@@ -137,6 +143,10 @@ spec:
             - name: passbolt-configmap
               mountPath: /etc/nginx/sites-enabled/nginx-passbolt.conf
               subPath: nginx-passbolt.conf
+              readOnly: true
+            - name: passbolt-configmap
+              mountPath: /etc/passbolt/app.php
+              subPath: app.php
               readOnly: true
             - name: jwt
               mountPath: /etc/passbolt/jwt

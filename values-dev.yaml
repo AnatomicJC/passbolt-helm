@@ -1,6 +1,10 @@
 ---
 passbolt:
   config:
+    session: cache
+    cacheCake:
+      defaultServer: passbolt-redis
+      defaultPassword: redispassword
     email:
       enabled: true
       from: you@localhost
@@ -13,7 +17,7 @@ passbolt:
     php:
       session:
         redis:
-          enabled: true
+          enabled: false
           # Redis Cluster
           #service: passbolt-redis-cluster
           # Redis Sentinel
@@ -60,7 +64,7 @@ mariadb-galera:
 redis:
   enabled: true
   sentinel:
-    enabled: true
+    enabled: false
     getMasterTimeout: 1
   auth:
     password: "redispassword"
@@ -70,5 +74,5 @@ redis-cluster:
   password: "redisclusterpassword"
 
 passbolt-ha-monitor:
-  enabled: true
+  enabled: false
   redisCliAuth: "redispassword"

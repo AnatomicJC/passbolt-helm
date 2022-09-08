@@ -72,3 +72,158 @@ data:
         fastcgi_read_timeout {{ .Values.passbolt.config.php.max_execution_time }};
       }
     }
+  app.php: |
+    <?php
+      return [
+          'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
+          'debugKit' => false,
+          'App' => [
+              'namespace' => 'App',
+              'encoding' => env('APP_ENCODING', 'UTF-8'),
+              'defaultLocale' => env('APP_DEFAULT_LOCALE', 'en_US'),
+              'base' => env('APP_BASE', false),
+              'dir' => 'src',
+              'webroot' => 'webroot',
+              'wwwRoot' => WWW_ROOT,
+              // 'baseUrl' => env('APP_BASE_URL'),
+              'fullBaseUrl' => env('APP_FULL_BASE_URL', false),
+              'imageBaseUrl' => 'img/',
+              'cssBaseUrl' => 'css/',
+              'jsBaseUrl' => 'js/',
+              'paths' => [
+                  'plugins' => [ROOT . DS . 'plugins' . DS],
+                  'templates' => [APP . 'Template' . DS],
+                  'locales' => [APP . 'Locale' . DS],
+              ],
+          ],
+          'Security' => [
+              'salt' => env('SECURITY_SALT', '0a2cf3998dd6dbf8905c7d41934a02c2807bf931ac447158706d5d14787d0aeb'),
+          ],
+          'Cache' => [
+              'default' => [
+                  'className' => 'Redis',
+                  'prefix' => CACHE_PREFIX_ORG,
+                  'server' => env('CACHE_CAKE_DEFAULT_SERVER', 'redis-master'),
+                  'database' => (int)env('CACHE_DEFAULT_DATABASE', 1),
+                  'password' => env('CACHE_CAKE_DEFAULT_PASSWORD', ''),
+                  'port' => 6379,
+              ],
+              '_cake_core_' => [
+                  'className' => 'Redis',
+                  'duration' => '+1 week',
+                  'server' => env('CACHE_CAKE_DEFAULT_SERVER', 'redis-master'),
+                  'database' => (int)env('CACHE_CAKE_CORE_DATABASE', 2),
+                  'password' => env('CACHE_CAKE_DEFAULT_PASSWORD', ''),
+                  'port' => 6379,
+              ],
+              '_cake_model_' => [
+                  'className' => 'Redis',
+                  'duration' => '+1 week',
+                  'server' => env('CACHE_CAKE_DEFAULT_SERVER', 'redis-master'),
+                  'database' => (int)env('CACHE_CAKE_MODEL_DATABASE', 3),
+                  'password' => env('CACHE_CAKE_DEFAULT_PASSWORD', ''),
+                  'port' => 6379
+              ],
+          ],
+          'Error' => [
+              'errorLevel' => E_ALL,
+              'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
+              'skipLog' => [],
+              'log' => true,
+              'trace' => true,
+          ],
+          'EmailTransport' => [
+              'default' => [
+                  'className' => env('EMAIL_TRANSPORT_DEFAULT_CLASS_NAME', 'Smtp'),
+                  // The following keys are used in SMTP transports
+                  'host' => env('EMAIL_TRANSPORT_DEFAULT_HOST', 'localhost'),
+                  'port' => env('EMAIL_TRANSPORT_DEFAULT_PORT', 25),
+                  'timeout' => env('EMAIL_TRANSPORT_DEFAULT_TIMEOUT', 30),
+                  'username' => env('EMAIL_TRANSPORT_DEFAULT_USERNAME', null),
+                  'password' => env('EMAIL_TRANSPORT_DEFAULT_PASSWORD', null),
+                  'client' => env('EMAIL_TRANSPORT_DEFAULT_CLIENT', null),
+                  'tls' => env('EMAIL_TRANSPORT_DEFAULT_TLS', null),
+                  'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', null),
+              ],
+              'Debug' => [
+                  'className' => 'Debug'
+              ],
+          ],
+          'Email' => [
+              'default' => [
+                  'transport' => env('EMAIL_DEFAULT_TRANSPORT', 'default'),
+                  'from' => env('EMAIL_DEFAULT_FROM', 'no-reply@passbolt.com'),
+                  //'charset' => 'utf-8',
+                  //'headerCharset' => 'utf-8',
+              ],
+          ],
+          'Datasources' => [
+              'default' => [
+                  'className' => 'Cake\Database\Connection',
+                  'driver' => env('DATASOURCES_DEFAULT_DRIVER', 'Cake\Database\Driver\Mysql'),
+                  'persistent' => false,
+                  'host' => env('DATASOURCES_DEFAULT_HOST', '127.0.0.1'),
+                  'port' => env('DATASOURCES_DEFAULT_PORT', 3306),
+                  'username' => env('DATASOURCES_DEFAULT_USERNAME', ''),
+                  'password' => env('DATASOURCES_DEFAULT_PASSWORD', ''),
+                  'database' => env('DATASOURCES_DEFAULT_DATABASE', ''),
+                  'ssl_key' => env('DATASOURCES_DEFAULT_SSL_KEY', ''),
+                  'ssl_cert' => env('DATASOURCES_DEFAULT_SSL_CERT', ''),
+                  'ssl_ca' => env('DATASOURCES_DEFAULT_SSL_CA', ''),
+                  'encoding' => 'utf8mb4',
+                  'timezone' => 'UTC',
+                  'flags' => [],
+                  'cacheMetadata' => true,
+                  'log' => false,
+                  'quoteIdentifiers' => false,
+
+                  'url' => env('DATASOURCES_DEFAULT_URL', null),
+              ],
+
+              /**
+              * The test connection is used during the test suite.
+              */
+              'test' => [
+                  'className' => 'Cake\Database\Connection',
+                  'driver' => env('DATASOURCES_TEST_DRIVER', 'Cake\Database\Driver\Mysql'),
+                  'persistent' => false,
+                  'host' => env('DATASOURCES_TEST_HOST', 'localhost'),
+                  'port' => env('DATASOURCES_TEST_PORT', 3306),
+                  'username' => env('DATASOURCES_TEST_USERNAME', 'my_app'),
+                  'password' => env('DATASOURCES_TEST_PASSWORD', 'secret'),
+                  'database' => env('DATASOURCES_TEST_DATABASE', 'my_app'),
+                  'ssl_key' => env('DATASOURCES_TEST_SSL_KEY', ''),
+                  'ssl_cert' => env('DATASOURCES_TEST_SSL_CERT', ''),
+                  'ssl_ca' => env('DATASOURCES_TEST_SSL_CA', ''),
+                  'encoding' => 'utf8mb4',
+                  'timezone' => 'UTC',
+                  'cacheMetadata' => true,
+                  'quoteIdentifiers' => false,
+                  'log' => false,
+                  //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
+                  'url' => env('DATASOURCES_TEST_URL', null),
+              ],
+          ],
+          'Log' => [
+              'debug' => [
+                  'engine' => env('LOG_DEBUG_ENGINE', 'File'),
+                  'className' => env('LOG_DEBUG_CLASS_NAME', 'Cake\Log\Engine\FileLog'),
+                  'path' => LOGS,
+                  'file' => 'debug',
+                  'levels' => ['notice', 'info', 'debug'],
+                  'url' => env('LOG_DEBUG_URL', null),
+              ],
+              'error' => [
+                  'engine' => env('LOG_ERROR_ENGINE', 'File'),
+                  'className' => env('LOG_ERROR_CLASS_NAME', 'Cake\Log\Engine\FileLog'),
+                  'path' => LOGS,
+                  'file' => 'error',
+                  'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+                  'url' => env('LOG_ERROR_URL', null),
+              ],
+          ],
+          'Session' => [
+              'defaults' => env('SESSION_DEFAULTS', 'cache'),
+              'duration' => '+1 day'
+          ],
+      ];
